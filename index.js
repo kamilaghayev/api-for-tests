@@ -33,12 +33,18 @@ app.post('/comments', (req, res) => {
 	if (!req.body) {
 		return res.status(400).json({ message: 'No data provided' });
 	}
-    const { text } = req.body;
-    if (!text) {
+    const body = req.body;
+    if (!Array.isArray(body) && body?.length <= 0) {
+        return res.status(400).json({ message: 'text is not array' });
+    }
+    if (!(body?.every(t => !!t?.text))) {
         return res.status(400).json({ error: 'text are required' });
     }
-    const newComment = { id: comments.length + 1, text, date: new Date() };
-    comments.push(newComment);
+    if (!body?.every(t => !!t?.date)) {
+        return res.status(400).json({ error: 'date are required' });
+    }
+    const newComment = body.map(t => ({ id: comments.length + 1, text: t.text, date: new Date(), createdDateOnUser: t.date }));
+    comments.push(...newComment);
     saveComments(comments);
     res.status(201).json(newComment);
 });
