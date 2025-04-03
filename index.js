@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
-const PORT = 6060;
+const PORT = process.env.PORT || 6060;
 const COMMENTS_FILE = path.join(__dirname, 'comments.json');
 
 app.use(bodyParser.json());
